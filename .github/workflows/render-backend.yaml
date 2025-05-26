@@ -1,0 +1,28 @@
+name: Convert Draw.io Diagram to PNG
+
+on:
+  push:
+    paths:
+      - "docs/backend-architecture.drawio"
+  workflow_dispatch:
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Convert diagram to PNG
+        uses: Burnett01/actions-drawio@1.2
+        with:
+          src: docs/backend-architecture.drawio
+          dest: docs/backend-architecture.png
+
+      - name: Commit and push converted PNG
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add docs/backend-architecture.png
+          git commit -m "Add converted backend-architecture.png" || echo "No changes to commit"
+          git push
