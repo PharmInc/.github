@@ -1,25 +1,32 @@
-name: Convert Draw.io Diagram to PNG
+name: Convert Uncompressed Draw.io XML to PNG
 
 on:
   push:
     paths:
-      - "docs/backend-architecture.drawio"
+      - "docs/backend-architecture.xml"
   workflow_dispatch:
 
 jobs:
   convert:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Convert diagram to PNG
+      - name: Install drawio CLI for compression
+        run: npm install -g @mxgraph/drawio
+
+      - name: Compress uncompressed XML to .drawio format
+        run: drawio compress docs/backend-architecture.xml docs/backend-architecture.drawio
+
+      - name: Convert compressed diagram to PNG
         uses: Burnett01/actions-drawio@1.2
         with:
           src: docs/backend-architecture.drawio
           dest: docs/backend-architecture.png
 
-      - name: Commit and push converted PNG
+      - name: Commit and push PNG
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
